@@ -36,19 +36,19 @@ architecture behave of regfile is
 			
 				-- Can either read or write in one clock cycle --
 				if WE3 = '1' then	
-					mem(to_integer(unsigned(A3))) <= WD3; -- Write to register in address specified by A3
-				else
-				
-					-- Hard code R0 to 0 --
-					if A1 = x"00000000" then RD1 <= x"00000000";
-					else RD1 <= mem(to_integer(unsigned(A1)));	-- Read register in address specified by A1
-					end if;
-					-- Hard code R0 to 0 --
-					if A2 = x"00000000" then RD2 <= x"00000000";
-					else RD2 <= mem(to_integer(unsigned(A2))); -- Read register in address specified by A1
-					end if;
-					
+				mem(to_integer(unsigned(A3))) <= WD3; -- Write to register in address specified by A3
 				end if;
+				
+				-- Hard code R0 to 0 --
+				if A1 = x"00000000" then RD1 <= x"00000000";
+				else RD1 <= mem(to_integer(unsigned(A1)));	-- Read register in address specified by A1
+				end if;
+				
+				-- Hard code R0 to 0 --
+				if A2 = x"00000000" then RD2 <= x"00000000";
+				else RD2 <= mem(to_integer(unsigned(A2))); -- Read register in address specified by A1
+				end if;
+					
 			end if;					
 		end process;
 end behave;
