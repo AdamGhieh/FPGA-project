@@ -1,7 +1,5 @@
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.numeric_std_unsigned.all;
-use ieee.numeric_std.all;
 
 entity regfile_tb is 
 
@@ -13,14 +11,14 @@ constant ClockFrequency : integer := 100e6; -- 100 MHz
 constant clk_period : time    := 1000 ms / ClockFrequency;
 
 signal Clk : std_logic := '0';
-signal WE3 : std_logic := '0';
-signal RST : std_logic := '0';
-signal WD3 : std_logic_vector(31 downto 0) := x"00000000";
-signal RD1 : std_logic_vector(31 downto 0) := x"00000000";
-signal RD2 : std_logic_vector(31 downto 0) := x"00000000";
-signal A1 : std_logic_vector(4 downto 0) := "00000";
-signal A2 : std_logic_vector(4 downto 0) := "00000";
-signal A3 : std_logic_vector(4 downto 0) := "00000";
+signal WE3 : std_logic;
+signal RST : std_logic;
+signal WD3 : std_logic_vector(31 downto 0);
+signal RD1 : std_logic_vector(31 downto 0);
+signal RD2 : std_logic_vector(31 downto 0);
+signal A1 : std_logic_vector(4 downto 0);
+signal A2 : std_logic_vector(4 downto 0);
+signal A3 : std_logic_vector(4 downto 0);
 
 begin
 	
@@ -139,7 +137,9 @@ BEGIN
     WD3  <= x"11223344";
     WAIT FOR clk_period;
     RST  <= '1';
+	WE3 <= '0';  
     WAIT FOR clk_period;
+	
     RST  <= '0';
     A1   <= "00110";
     WAIT FOR clk_period;

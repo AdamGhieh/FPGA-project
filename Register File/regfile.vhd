@@ -21,34 +21,44 @@ architecture behave of regfile is
 	signal mem : ramtype;
 	
 	begin
-	
-		regFile : process(RST, Clk)
+		
+		process(Clk)
 		begin
-		--	Asynchronous reset -- 
-			if RST = '1' then
-			
-				for i in 31 downto 0 loop
-					mem(i) <= x"00000000";
-				end loop;
-			
 			-- Check for rising edge of clock -- 
-			elsif rising_edge(Clk) then
+			if rising_edge(Clk) then
 			
-				-- Can either read or write in one clock cycle --
+				--	Synchronous reset -- 
+				if RST = '1' then
+				
+					for i in 31 downto 0 loop
+						mem(i) <= x"00000000";
+					end loop;
+					
+				end if;
+		
+				-- Write if enable is active --
 				if WE3 = '1' then	
 				mem(to_integer(unsigned(A3))) <= WD3; -- Write to register in address specified by A3
-				end if;
+				end if;	
 				
-				-- Hard code R0 to 0 --
-				if A1 = x"00000000" then RD1 <= x"00000000";
-				else RD1 <= mem(to_integer(unsigned(A1)));	-- Read register in address specified by A1
-				end if;
-				
-				-- Hard code R0 to 0 --
-				if A2 = x"00000000" then RD2 <= x"00000000";
-				else RD2 <= mem(to_integer(unsigned(A2))); -- Read register in address specified by A1
-				end if;
-					
-			end if;					
+			end if;	
+		end process;
+		
+		process(A1, A2, A3, Clk, RST)
+		begin
+			
+			-- Hard code R0 to 0 --
+			if A1 = x"00000000" then RD1 <= x"00000000";
+			elsif A1 = A3 and rising_edge(Clk) and WE3 = '1' then RD1 <= WD3; -- Read after Write
+			elsif RST = '1' then RD2 <= x"00000000";	-- Read after Reset
+			else RD1 <= mem(to_integer(unsigned(A1)));	-- Read register in address specified by A1
+			end if;
+			
+			-- Hard code R0 to 0 --
+			if A2 = x"00000000" then RD2 <= x"00000000";
+			elsif A2 = A3 and rising_edge(Clk) and WE3 = '1' then RD2 <= WD3; -- Read after Write
+			else RD2 <= mem(to_integer(unsigned(A2)));  -- Read register in address specified by A2
+			end if;
+			
 		end process;
 end behave;
