@@ -15,7 +15,6 @@ end alu;
 architecture behave of alu is
 
 	signal Temp_Result : std_logic_vector(32 downto 0);
-	signal Overflow : std_logic_vector(31 downto 0);
 	
 begin 
 	alu : process(A, B, ALU_Control) 
@@ -24,13 +23,11 @@ begin
 		
 			when "000" =>	-- ADD Function --
 				
-				Temp_Result <= std_logic_vector(unsigned('0' & A) + unsigned('0' & B));
-				Overflow <= std_logic_vector(unsigned('0' & A(30 downto 0)) + unsigned('0' & B(30 downto 0)));
+				Temp_Result <= std_logic_vector(signed('0' & A) + signed('0' & B));
 				
 			when "001" => -- SUB Function --
 			
 				Temp_Result <= std_logic_vector(signed('0' & A) - signed('0' & B));
-				Overflow <= std_logic_vector(signed('0' & A(30 downto 0)) - signed('0' & B(30 downto 0)));
 			
 			when "010" =>	-- AND Function --
 			
@@ -56,19 +53,19 @@ begin
 			
 				
 				Temp_Result <= std_logic_vector(signed('0' & A) - signed('0' & B));
-				Overflow <= (others => '0');
 			
 			when others =>
 			
 				Temp_result <= (others => 'X');
-				Overflow <= (others => 'X');
 				
 		end case;
 	end process;
 	
 		ALU_Result <= (x"0000000" & "000" & Temp_Result(31)) when ALU_Control = "111"  else Temp_Result(31 downto 0);
-		V <= Temp_Result(32) XOR overflow(31);
+		V <= (A(31) and B(31) and not(Temp_Result(31))) or (not(A(31)) and not(B(31)) and Temp_Result(31)) when ALU_Control = "000" else
+		     (A(31) and not(B(31)) and not(Temp_Result(31))) or (not(A(31)) and B(31) and Temp_Result(31)) when ALU_Control = "001" else '0';
+			 
 		Z <= '1' when to_integer(signed(Temp_Result(31 downto 0))) = 0 else '0';
-		N <= Temp_Result(31);
+		N <= '0' when ALU_Control = "111" else Temp_Result(31);
 		
 end behave;
