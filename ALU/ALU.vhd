@@ -51,7 +51,6 @@ begin
 			
 			when "111"	 => -- Less Than (SLT) --
 			
-				
 				Temp_Result <= std_logic_vector(signed('0' & A) - signed('0' & B));
 			
 			when others =>
@@ -61,11 +60,17 @@ begin
 		end case;
 	end process;
 	
+		-- If less than option is chosen for ALU_Control, use LSB as sign bit, and set the rest to 0, otherwise use temp_result --
 		ALU_Result <= (x"0000000" & "000" & Temp_Result(31)) when ALU_Control = "111"  else Temp_Result(31 downto 0);
+		
+		-- Overflow is calculated by comparing operands sign to result sign for arithmetic operation, V = 0 for any other operation --
 		V <= (A(31) and B(31) and not(Temp_Result(31))) or (not(A(31)) and not(B(31)) and Temp_Result(31)) when ALU_Control = "000" else
 		     (A(31) and not(B(31)) and not(Temp_Result(31))) or (not(A(31)) and B(31) and Temp_Result(31)) when ALU_Control = "001" else '0';
-			 
+	
+		-- Zero flag checks for result value --
 		Z <= '1' when to_integer(signed(Temp_Result(31 downto 0))) = 0 else '0';
+		
+		-- Signed bit of result --
 		N <= '0' when ALU_Control = "111" else Temp_Result(31);
 		
 end behave;
