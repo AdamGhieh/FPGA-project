@@ -32,6 +32,7 @@ begin
 	
 		sign := imm(31);
 		
+		-- Extending and arranging immediate following RISC-V instruction set format --
 		case immSrc is
 			
 			when I_Type =>

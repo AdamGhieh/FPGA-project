@@ -16,7 +16,10 @@ architecture behave of pc is
 
 signal PC_Target  : std_logic_vector(31 downto 0);
 signal PC_Next : std_logic_vector(31 downto 0);
-signal PC_output : std_logic_vector(31 downto 0) := (others => '0'); -- output is initialized to 0 to make design functional (might update code to be more thorough with initial pc address)
+
+ -- output is initialized to 0 to make design functional (To change) -- 
+signal PC_output : std_logic_vector(31 downto 0) := (others => '0');
+
 signal PC_Plus4 : std_logic_vector(31 downto 0);
 
 begin
