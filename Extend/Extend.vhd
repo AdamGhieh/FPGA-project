@@ -17,7 +17,7 @@ constant I_Type : std_logic_vector(2 downto 0) := "000";
 constant S_Type : std_logic_vector(2 downto 0) := "001";
 constant B_Type : std_logic_vector(2 downto 0) := "010";
 constant U_Type : std_logic_vector(2 downto 0) := "011";
-constant J_Type : std_logic_vector(2 downto 0) := "101";
+constant J_Type : std_logic_vector(2 downto 0) := "100";
 
 signal Ext : std_logic_vector(31 downto 0); -- signal representing extended and formatted immediate value
 
@@ -32,7 +32,6 @@ begin
 	
 		sign := imm(31);
 		
-		-- Extending and arranging immediate following RISC-V instruction set format --
 		case immSrc is
 			
 			when I_Type =>
@@ -63,7 +62,7 @@ begin
 				Ext(20 downto 0) <= imm(31) & imm(19 downto 12) & imm(20) & imm(30 downto 21) & '0';
 	
 			when others =>
-				Ext <= (others => 'X');
+				Ext <= (others => '0');
 		end case;
 	end process;
 	
