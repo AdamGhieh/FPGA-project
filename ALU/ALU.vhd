@@ -6,9 +6,9 @@ entity alu is
 	port
 	(
 		A, B : in std_logic_vector(31 downto 0);
-		ALU_Control : in std_logic_vector(2 downto 0);
-		V, N, Z : out std_logic;
-		ALU_Result : out std_logic_vector(31 downto 0)
+		ALU_ctrl : in std_logic_vector(2 downto 0);
+		overflow, negative, zero : out std_logic;
+		result : out std_logic_vector(31 downto 0)
 	);
 end alu;
 
@@ -17,9 +17,9 @@ architecture behave of alu is
 	signal Temp_Result : std_logic_vector(32 downto 0);
 	
 begin 
-	alu : process(A, B, ALU_Control) 
+	alu : process(A, B, ALU_ctrl) 
 	begin
-		case ALU_Control is 
+		case ALU_ctrl is 
 		
 			when "000" =>	-- ADD Function --
 				
@@ -60,17 +60,17 @@ begin
 		end case;
 	end process;
 	
-		-- If less than option is chosen for ALU_Control, use LSB as sign bit, and set the rest to 0, otherwise use temp_result --
-		ALU_Result <= (x"0000000" & "000" & Temp_Result(31)) when ALU_Control = "111"  else Temp_Result(31 downto 0);
+		-- If less than option is chosen for ALU_ctrl, use LSB as sign bit, and set the rest to 0, otherwise use temp_result --
+		result <= (x"0000000" & "000" & Temp_Result(31)) when ALU_ctrl = "111"  else Temp_Result(31 downto 0);
 		
-		-- Overflow is calculated by comparing operands sign to result sign for arithmetic operation, V = 0 for any other operation --
-		V <= (A(31) and B(31) and not(Temp_Result(31))) or (not(A(31)) and not(B(31)) and Temp_Result(31)) when ALU_Control = "000" else
-		     (A(31) and not(B(31)) and not(Temp_Result(31))) or (not(A(31)) and B(31) and Temp_Result(31)) when ALU_Control = "001" else '0';
+		-- Overflow is calculated by comparing operands sign to result sign for arithmetic operation, overflow = 0 for any other operation --
+		overflow <= (A(31) and B(31) and not(Temp_Result(31))) or (not(A(31)) and not(B(31)) and Temp_Result(31)) when ALU_ctrl = "000" else
+		     (A(31) and not(B(31)) and not(Temp_Result(31))) or (not(A(31)) and B(31) and Temp_Result(31)) when ALU_ctrl = "001" else '0';
 	
 		-- Zero flag checks for result value --
-		Z <= '1' when to_integer(signed(Temp_Result(31 downto 0))) = 0 else '0';
+		zero <= '1' when to_integer(signed(Temp_Result(31 downto 0))) = 0 else '0';
 		
 		-- Signed bit of result --
-		N <= '0' when ALU_Control = "111" else Temp_Result(31);
+		negative <= '0' when ALU_ctrl = "111" else Temp_Result(31);
 		
 end behave;
