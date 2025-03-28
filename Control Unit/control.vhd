@@ -26,7 +26,7 @@ architecture behave of control is
 
 begin
 
-	process(op, funct3, funct7)
+	process(op, funct3, funct7, Zero)
 	begin
 	
 	---------------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ begin
 			ImmSrc1 <= "111"; 	-- Set Invalid Type so that Extend unit outputs 0s 
 			RegWrite1 <= '1';
 			
-		elsif op = "0110011" and funct3 = "000" and funct7 = "0000000" then	-- SUB --
+		elsif op = "0110011" and funct3 = "000" and funct7 = "0100000" then	-- SUB --
 		
 			PCSrc1 <= "00";
 			ResultSrc1 <= "00";
