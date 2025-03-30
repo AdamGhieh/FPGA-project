@@ -202,7 +202,7 @@ begin
 		-- LUI --
 		op_tb <= "0110111"; wait for 10 ns;
 		
-		assert PCSrc_tb = "00" and ResultSrc_tb = "10" and MemWrite_tb = '0' and ALUControl_tb = "000" and ALUSrc_tb = '0' and ImmSrc_tb = "011" and RegWrite_tb = '1'
+		assert PCSrc_tb = "00" and ResultSrc_tb = "11" and MemWrite_tb = '0' and ALUControl_tb = "000" and ALUSrc_tb = '0' and ImmSrc_tb = "011" and RegWrite_tb = '1'
 		report "Case 23: Failed";
 		wait;
 	

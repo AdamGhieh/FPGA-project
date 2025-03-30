@@ -245,7 +245,7 @@ begin
 		elsif op = "0110111"  then											-- LUI --
 		
 			PCSrc1 <= "00";
-			ResultSrc1 <= "10";
+			ResultSrc1 <= "11";
 			MemWrite1 <= '0';
 			ALUControl1 <= "000";
 			ALUSrc1 <= '0';
