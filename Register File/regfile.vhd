@@ -1,17 +1,16 @@
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.numeric_std_unsigned.all;
 use ieee.numeric_std.all;
 
 entity regfile is
 	port 
 	(
-		Clk : in std_logic;
-		WE3 : in std_logic;
-		RST : in std_logic;
-		A1, A2, A3 : in std_logic_vector(4 downto 0);
-		WD3 : in std_logic_vector(31 downto 0);
-		RD1, RD2 : out std_logic_vector(31 downto 0)
+		Clk : in std_logic := '0';
+		WE3 : in std_logic := '0';
+		RST : in std_logic := '1';
+		A1, A2, A3 : in std_logic_vector(4 downto 0) := (others => '0');
+		WD3 : in std_logic_vector(31 downto 0) := (others => '0');
+		RD1, RD2 : out std_logic_vector(31 downto 0) := (others => '0')
 	);
 end regfile;
 
