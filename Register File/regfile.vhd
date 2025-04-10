@@ -47,14 +47,14 @@ architecture behave of regfile is
 		begin
 			
 			-- Hard code R0 to 0 --
-			if A1 = x"00000000" then RD1 <= x"00000000";
+			if A1 = "00000" then RD1 <= x"00000000";
 			elsif A1 = A3 and rising_edge(Clk) and WE3 = '1' then RD1 <= WD3; -- Read after Write
 			elsif RST = '1' then RD2 <= x"00000000";	-- Read after Reset
 			else RD1 <= mem(to_integer(unsigned(A1)));	-- Read register in address specified by A1
 			end if;
 			
 			-- Hard code R0 to 0 --
-			if A2 = x"00000000" then RD2 <= x"00000000";
+			if A2 = "00000" then RD2 <= x"00000000";
 			elsif A2 = A3 and rising_edge(Clk) and WE3 = '1' then RD2 <= WD3; -- Read after Write
 			else RD2 <= mem(to_integer(unsigned(A2)));  -- Read register in address specified by A2
 			end if;
