@@ -13,21 +13,20 @@ end;
  
  
 architecture behave of dmem is
+
+	type ramtype is  array (63 downto 0) of STD_LOGIC_VECTOR(31 downto 0);
+	signal mem: ramtype;
+	
 begin
-    process is
-       type ramtype is  array (63 downto 0) of STD_LOGIC_VECTOR(31 downto 0);
-       variable mem: ramtype;
+    process(clk) is
 	begin
         -- read or write memory -- 
-        loop
 			if rising_edge(clk) then
 				if (we = '1') then 
-					mem(to_integer(unsigned(a(7 downto 2)))) := wd;
+					mem(to_integer(unsigned(a(7 downto 2)))) <= wd;
 				end if;
-			end if;
-			   
-			rd <= mem(to_integer(unsigned(a(7 downto 2)))); -- address 100 is 1100100, ignore 2 last bits
-			wait on clk, a;
-        end loop;
+			end if;   
     end process;
+	
+	rd <= mem(to_integer(unsigned(a(7 downto 2)))); -- address 100 is 1100100, ignore 2 last bits
  end; 

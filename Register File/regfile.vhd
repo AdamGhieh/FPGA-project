@@ -19,6 +19,7 @@ architecture behave of regfile is
 	type ramtype is array (31 downto 0) of std_logic_vector(31 downto 0);
 	signal mem : ramtype;
 	
+	
 	begin
 		
 		process(Clk)
@@ -28,11 +29,9 @@ architecture behave of regfile is
 			
 				--	Synchronous reset -- 
 				if RST = '1' then
-				
 					for i in 31 downto 0 loop
 						mem(i) <= x"00000000";
 					end loop;
-					
 				end if;
 		
 				-- Write if enable is active --
@@ -43,21 +42,9 @@ architecture behave of regfile is
 			end if;	
 		end process;
 		
-		process(A1, A2, A3, Clk, RST)
-		begin
-			
-			-- Hard code R0 to 0 --
-			if A1 = "00000" then RD1 <= x"00000000";
-			elsif A1 = A3 and rising_edge(Clk) and WE3 = '1' then RD1 <= WD3; -- Read after Write
-			elsif RST = '1' then RD2 <= x"00000000";	-- Read after Reset
-			else RD1 <= mem(to_integer(unsigned(A1)));	-- Read register in address specified by A1
-			end if;
-			
-			-- Hard code R0 to 0 --
-			if A2 = "00000" then RD2 <= x"00000000";
-			elsif A2 = A3 and rising_edge(Clk) and WE3 = '1' then RD2 <= WD3; -- Read after Write
-			else RD2 <= mem(to_integer(unsigned(A2)));  -- Read register in address specified by A2
-			end if;
-			
-		end process;
+		RD1 <= x"00000000" when A1 = "00000" else
+			   mem(to_integer(unsigned(A1)));
+			   
+		RD2 <= x"00000000" when A2 = "00000" else
+			   mem(to_integer(unsigned(A2)));
 end behave;

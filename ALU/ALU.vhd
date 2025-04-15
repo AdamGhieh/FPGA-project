@@ -19,6 +19,9 @@ architecture behave of alu is
 begin 
 	alu : process(A, B, ALU_ctrl) 
 	begin
+	
+		Temp_result <= (others => '0');
+		
 		case ALU_ctrl is 
 		
 			when "000" =>	-- ADD Function --
@@ -55,7 +58,7 @@ begin
 			
 			when others =>
 			
-				Temp_result <= (others => 'X');
+				Temp_result <= (others => '0');
 				
 		end case;
 	end process;
