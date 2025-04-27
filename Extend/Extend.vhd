@@ -14,6 +14,7 @@ end extend;
 architecture behave of extend is
 
 constant I_Type : std_logic_vector(2 downto 0) := "000";
+constant I_Type_SRA : std_logic_vector(2 downto 0) := "101";
 constant S_Type : std_logic_vector(2 downto 0) := "001";
 constant B_Type : std_logic_vector(2 downto 0) := "010";
 constant U_Type : std_logic_vector(2 downto 0) := "011";
@@ -38,6 +39,11 @@ begin
 			
 				Ext(31 downto 12) <= (others => sign);
 				Ext(11 downto 0) <= imm(31 downto 20);
+			
+			when I_Type_SRA =>
+				
+				Ext(31 downto 5) <= (others => sign);
+				Ext(4 downto 0) <= imm(24 downto 20);
 				
 			when S_Type =>
 				
