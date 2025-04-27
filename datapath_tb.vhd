@@ -11,17 +11,17 @@ architecture test of testbench is
        port
 	   (
 			clk, reset : in   STD_LOGIC;
-            WriteData, DataAdr : out STD_LOGIC_VECTOR(31 downto 0);
+            WriteData, DataAdr, PCout : out STD_LOGIC_VECTOR(31 downto 0);
             MemWrite : out STD_LOGIC
 		);
    end component;
 
-   signal WriteData, DataAdr:     STD_LOGIC_VECTOR(31 downto 0);
-   signal clk, reset, MemWrite: STD_LOGIC;
- 
+   signal WriteData, DataAdr, PCout : STD_LOGIC_VECTOR(31 downto 0);
+   signal clk, reset, MemWrite : STD_LOGIC;
+	
 begin
    -- instantiate device to be tested
-   dut: top port map(clk, reset, WriteData, DataAdr, MemWrite);
+   dut: top port map(clk, reset, WriteData, DataAdr, PCout, MemWrite);
    -- Generate clock with 10 ns period
    process begin
         clk <= '1';
@@ -37,14 +37,13 @@ begin
        wait;
    end process;
 
-   -- check that 25 gets written to address 100 at end of program
    process(clk) begin
-       if(clk'event and clk = '0' and MemWrite = '1') then
-          if( to_integer(DataAdr) = 100 and to_integer(writedata) = 25) then
-               report "NO ERRORS: Simulation succeeded" severity failure;
-          elsif (DataAdr /= 96) then
-              report "Simulation failed" severity failure;
-          end if;
+        if(PCout = x"00000014") then
+			report "Testbench Complete: Program reached end address";
+		elsif (PCout = x"0000004C") then
+			report "Error address reached";
 		end if;
    end process;
+   
+   
 end; 

@@ -8,7 +8,8 @@ entity top is
 		clk : in std_logic;
 		reset : in std_logic;
 		WriteData, DataAdr : out std_logic_vector(31 downto 0);
-        MemWrite : out std_logic
+        MemWrite : out std_logic;
+		PCout : out std_logic_vector(31 downto 0)
 	);
 end entity;
 
@@ -18,8 +19,8 @@ architecture behave of top is
 	signal SrcA : std_logic_vector(31 downto 0);
 	signal SrcB : std_logic_vector(31 downto 0);
 	signal ALU_Result : std_logic_vector(31 downto 0);
-	signal Zero : std_logic;
-	signal ALU_Control : std_logic_vector(2 downto 0);
+	signal Zero, Carry, Overflow, Negative : std_logic;
+	signal ALU_Control : std_logic_vector(3 downto 0);
 	
 	-- Signals for register file -- 
 	signal RegWrite : std_logic;
@@ -43,11 +44,13 @@ architecture behave of top is
 	-- Signals for control unit --
 	signal ALUSrc : std_logic;
 	signal PCSrc : std_logic_vector(1 downto 0);
-	signal ResultSrc : std_logic_vector(1 downto 0);
+	signal ResultSrc : std_logic_vector(2 downto 0);
 	signal MemEnable : std_logic;
-	
+	signal DataType : std_logic;
+	signal DataSize : std_logic_vector(1 downto 0);
 
 	signal PCplus4 : std_logic_vector(31 downto 0);
+	signal PCTarget : std_logic_vector(31 downto 0);
 	
 begin
 
@@ -57,8 +60,9 @@ begin
 			A => SrcA,
 			B => SrcB,
 			ALU_Ctrl => ALU_Control,
-			overflow => open,
-			negative => open,
+			overflow => Overflow,
+			negative => Negative,
+			carry => Carry,
 			zero => Zero,
 			result => ALU_Result
 		);
@@ -95,7 +99,10 @@ begin
 		(
 			clk => clk,
 			we => MemEnable,
+			reset => reset,
 			a => ALU_Result,
+			datatype => DataType,
+			datasize => DataSize,
 			wd => RD2,
 			rd => ReadData
 		);
@@ -112,13 +119,18 @@ begin
 			funct3 => Instr(14 downto 12),
 			funct7 => Instr(31 downto 25),
 			Zero => Zero,
+			Overflow => Overflow,
+			Carry => Carry,
+			Negative => Negative,
 			MemWrite => MemEnable,
 			ALUSrc => ALUSrc,
 			RegWrite => RegWrite,
 			ResultSrc => ResultSrc,
 			PCSrc => PCSrc,
 			ALUControl => ALU_Control,
-			ImmSrc => ImmSrc
+			ImmSrc => ImmSrc,
+			DataType => DataType,
+			DataSize => DataSize
 		);
 	
 	
@@ -128,16 +140,18 @@ begin
 			else (others => '0');
 			
 	-- Combinational logic for regFile --
-	Result <= ALU_Result when ResultSrc = "00"
-			  else ReadData when ResultSrc = "01"
-			  else PCplus4 when ResultSrc = "10"
-			  else ImmExt when ResultSrc = "11"
+	Result <= ALU_Result when ResultSrc = "000"
+			  else ReadData when ResultSrc = "001"
+			  else PCplus4 when ResultSrc = "010"
+			  else ImmExt when ResultSrc = "011"
+			  else PCTarget when ResultSrc = "100"
 			  else (others => '0');
 	
 	-- Combinational logic for PC --
 	PCplus4 <= std_logic_vector(unsigned(PC) + 4);
+	PCTarget <= std_logic_vector(signed(unsigned(PC) + unsigned(ImmExt)));
 	PCnext <= PCplus4 when PCSrc = "00"
-			  else std_logic_vector(signed(unsigned(PC) + unsigned(ImmExt))) when PCSrc = "01"
+			  else PCTarget when PCSrc = "01"
 			  else ALU_Result when PCSrc = "10"
 			  else PCplus4;
 	
@@ -145,5 +159,6 @@ begin
 	DataAdr <= ALU_Result when MemEnable = '1' else (others => '0');
 	
 	MemWrite <= MemEnable;
+	PCout <= PC;
 	
 end architecture;
