@@ -28,7 +28,7 @@ architecture behave of control is
 
 begin
 
-	process(op, funct3, funct7, Zero)
+	process(op, funct3, funct7, Zero, Carry, Negative, Overflow)
 	begin
 	
 	---------------------------------------------------------------------------------------

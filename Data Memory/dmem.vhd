@@ -104,6 +104,6 @@ begin
 	(31 downto 8 => '0') & mem(to_integer(unsigned(a(7 downto 2))))(23 downto 16)											when datasize = "10" and a(1 downto 0) = "10" and datatype = '1' else
 	
 	(31 downto 8 => mem(to_integer(unsigned(a(7 downto 2))))(31)) & mem(to_integer(unsigned(a(7 downto 2))))(31 downto 24)	when datasize = "10" and a(1 downto 0) = "11" and datatype = '0' else
-	(31 downto 8 => '0') & mem(to_integer(unsigned(a(7 downto 2))))(31 downto 24)											when datasize = "10" and a(1 downto 0) = "11" and datatype = '1';
+	(31 downto 8 => '0') & mem(to_integer(unsigned(a(7 downto 2))))(31 downto 24)											when datasize = "10" and a(1 downto 0) = "11" and datatype = '1' else (others => '0');
 	
  end; 
